@@ -1,10 +1,23 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+"""This is a simple text editor."""
+
+__author__ = "Hannan Khan"
+__copyright__ = "Copyright 2020, ZenText"
+__credits__ = ["Hannan Khan"]
+__license__ = "MIT"
+__version__ = "1.0"
+__maintainer__ = "Hannan Khan"
+__email__ = "hannankhan888@gmail.com"
+
+import os
+import webbrowser
 from tkinter import *
 from tkinter.ttk import *
 from tkinter.filedialog import asksaveasfilename, askopenfilename
 import tkinter.colorchooser
 from tkfontchooser import askfont
-import webbrowser
-import os
 
 
 class newTextEditor():
@@ -79,7 +92,7 @@ class newTextEditor():
 
     def saveAs(self):
         self.filename = asksaveasfilename(title="Select File",
-                                          filetypes=(("text files", "*.txt"), ("all files", "*.*")))
+                                          filetypes=(("Text Files", "*.txt"), ("All Files", "*.*")))
         file = open(self.filename + ".txt", "w")
         self.root.title("ZenText" + " - " + os.path.basename(self.filename))
         file.write(self.textBox.get(1.0, END))
@@ -152,16 +165,43 @@ class newTextEditor():
     def about(self):
         self.leaf = Toplevel(self.root)
         self.leaf.title('About')
-        self.leaf.geometry('285x85')
+        self.leaf.geometry('285x95')
         self.leaf.iconbitmap('icon.ico')
         self.a = Label(self.leaf, text='Created by Hannan Khan (2020)')
         self.githublink = tkinter.Label(self.leaf, text='https://github.com/hannankhan888', foreground='blue', cursor='hand2')
         self.githublink.bind('<Button-1>', lambda e: webbrowser.open_new('https://github.com/hannankhan888'))
         self.linkedinlink = tkinter.Label(self.leaf, text='https://www.linkedin.com/in/hannankhan888/', fg='blue', cursor='hand2')
         self.linkedinlink.bind("<Button-1>", lambda e: webbrowser.open_new('https://www.linkedin.com/in/hannankhan888/'))
+        self.licenseLink = tkinter.Label(self.leaf, text='License', fg='blue', cursor='hand2')
+        self.licenseLink.bind('<Button-1>', lambda e: self.licenseBox())
         self.a.pack()
         self.githublink.pack()
         self.linkedinlink.pack()
+        self.licenseLink.pack()
+
+    def licenseBox(self):
+        self.leaflet = Toplevel(self.leaf)
+        self.leaflet.title('License')
+        self.leaflet.geometry('400x500')
+        self.leaflet.iconbitmap('icon.ico')
+        self.licenseText = Text(self.leaflet, bg='lightgray')
+        self.licenseText.insert(END,'MIT License\n\nCopyright (c) 2020 Hannan Khan\n\nPermission is hereby granted, '
+                                    'free of charge, to any person obtaining a copy of this software and associated '
+                                    'documentation files (the \"Software\"), to deal in the Software without '
+                                    'restriction, including without limitation the rights to use, copy, modify, '
+                                    'merge, publish, distribute, sublicense, and/or sell copies of the Software, '
+                                    'and to permit persons to whom the Software is furnished to do so, subject to the '
+                                    'following conditions:\nThe above copyright notice and this permission notice '
+                                    'shall be included in all copies or substantial portions of the Software.\n\nTHE '
+                                    'SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR '
+                                    'IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, '
+                                    'FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE '
+                                    'AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER '
+                                    'LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, '
+                                    'OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE '
+                                    'SOFTWARE.')
+        self.licenseText.configure(state=DISABLED, wrap=WORD)
+        self.licenseText.pack(fill=BOTH, expand=1)
 
 
 def main():
@@ -169,3 +209,4 @@ def main():
 
 
 if __name__ == '__main__': main()
+
