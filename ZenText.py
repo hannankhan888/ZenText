@@ -11,7 +11,7 @@ __version__ = "1.0"
 __maintainer__ = "Hannan Khan"
 __email__ = "hannankhan888@gmail.com"
 
-import os
+import sys, os
 import webbrowser
 from tkinter import *
 from tkinter.ttk import *
@@ -19,6 +19,15 @@ from tkinter.filedialog import asksaveasfilename, askopenfilename
 import tkinter.colorchooser
 from tkfontchooser import askfont
 
+#function needed to use pyinstaller properly:
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath('.')
+    return os.path.join(base_path, relative_path)
 
 class newTextEditor():
     def __init__(self):
@@ -28,7 +37,7 @@ class newTextEditor():
         self.root.tk.call('tk', 'scaling', 1.45)
         self.root.geometry(str(self.WIDTH) + "x" + str(self.HEIGHT))
         self.root.title("ZenText")
-        self.root.iconbitmap('icon.ico')
+        self.root.iconbitmap(resource_path('icon.ico'))
         self.filename = ''
         # adds value for word/char wrap option
         self.wordVal = IntVar()
@@ -166,7 +175,7 @@ class newTextEditor():
         self.leaf = Toplevel(self.root)
         self.leaf.title('About')
         self.leaf.geometry('285x95')
-        self.leaf.iconbitmap('icon.ico')
+        self.leaf.iconbitmap(resource_path('icon.ico'))
         self.a = Label(self.leaf, text='Created by Hannan Khan (2020)')
         self.githublink = tkinter.Label(self.leaf, text='https://github.com/hannankhan888', foreground='blue', cursor='hand2')
         self.githublink.bind('<Button-1>', lambda e: webbrowser.open_new('https://github.com/hannankhan888'))
@@ -183,7 +192,7 @@ class newTextEditor():
         self.leaflet = Toplevel(self.leaf)
         self.leaflet.title('License')
         self.leaflet.geometry('400x500')
-        self.leaflet.iconbitmap('icon.ico')
+        self.leaflet.iconbitmap(resource_path('icon.ico'))
         self.licenseText = Text(self.leaflet, bg='lightgray')
         self.licenseText.insert(END,'MIT License\n\nCopyright (c) 2020 Hannan Khan\n\nPermission is hereby granted, '
                                     'free of charge, to any person obtaining a copy of this software and associated '
@@ -209,5 +218,3 @@ def main():
 
 
 if __name__ == '__main__': main()
-
-
