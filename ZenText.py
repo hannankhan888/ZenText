@@ -19,6 +19,7 @@ from tkinter.filedialog import asksaveasfilename, askopenfilename
 import tkinter.colorchooser
 from tkfontchooser import askfont
 
+
 #function needed to use pyinstaller properly:
 def resource_path(relative_path):
     """ Get absolute path to resource, works for dev and for PyInstaller """
@@ -29,12 +30,13 @@ def resource_path(relative_path):
         base_path = os.path.abspath('.')
     return os.path.join(base_path, relative_path)
 
+
 class newTextEditor():
     def __init__(self):
         self.HEIGHT = 600
         self.WIDTH = 800
         self.root = Tk()
-        self.root.tk.call('tk', 'scaling', 1.45)
+        self.root.tk.call('tk', 'scaling', 1.6)
         self.root.geometry(str(self.WIDTH) + "x" + str(self.HEIGHT))
         self.root.title("ZenText")
         self.root.iconbitmap(resource_path('icon.ico'))
@@ -46,7 +48,7 @@ class newTextEditor():
         self.charVal.set(1)
 
         # add the text editor to a frame with scrollbars
-        self.textFrame = Frame(self.root)
+        self.textFrame = tkinter.Frame(self.root)
         self.textFrame.pack()
         self.textBox = Text(self.root, undo=True)
         # adds scrollbars to text box
@@ -94,6 +96,25 @@ class newTextEditor():
         self.helpMenu = Menu(self.topMenuBar, tearoff=0)
         self.helpMenu.add_command(label="About", command=self.about)
         self.topMenuBar.add_cascade(label="Help", menu=self.helpMenu)
+
+
+        #if argument exists, open the specified file (takes care of spaces in path)
+        if (len(sys.argv) > 1):
+            self.fullpath = r""""""
+            for i, word in enumerate(sys.argv):
+                if (i == 1):
+                    self.fullpath = self.fullpath + word
+                elif (i > 1):
+                    self.fullpath =self.fullpath + ' ' + word
+            self.fullpath.strip()
+            self.filename = os.path.basename(self.fullpath)
+            file = open(self.fullpath, "r")
+            self.root.title('ZenText' + ' - ' + os.path.basename(self.fullpath))
+            self.textBox.delete(1.0, END)
+            text = file.read()
+            self.textBox.insert(END, text)
+            file.close()
+
         self.root.mainloop()
 
     def exitRootWindow(self):
@@ -102,14 +123,18 @@ class newTextEditor():
     def saveAs(self):
         self.filename = asksaveasfilename(title="Select File",
                                           filetypes=(("Text Files", "*.txt"), ("All Files", "*.*")))
-        file = open(self.filename + ".txt", "w")
-        self.root.title("ZenText" + " - " + os.path.basename(self.filename))
-        file.write(self.textBox.get(1.0, END))
-        file.close()
+        if self.filename:
+            file = open(self.filename + ".txt", "w")
+            self.root.title("ZenText" + " - " + os.path.basename(self.filename))
+            file.write(self.textBox.get(1.0, END))
+            file.close()
 
     def save(self):
         if self.filename:
-            file = open(self.filename + ".txt", "w")
+            if '.txt' in self.filename:
+                file = open(self.filename, "w")
+            else:
+                file = open(self.filename + ".txt", "w")
             self.root.title("ZenText" + " - " + os.path.basename(self.filename))
             file.write(self.textBox.get(1.0, END))
             file.close()
@@ -118,12 +143,13 @@ class newTextEditor():
 
     def openFile(self):
         self.filename = askopenfilename(title="Select file", filetypes=(("text files", "*.txt"), ("all files", "*.*")))
-        file = open(self.filename)
-        self.root.title('ZenText' + ' - ' + os.path.basename(self.filename))
-        self.textBox.delete(1.0, END)
-        text = file.read()
-        self.textBox.insert(END, text)
-        file.close()
+        if self.filename:
+            file = open(self.filename)
+            self.root.title('ZenText' + ' - ' + os.path.basename(self.filename))
+            self.textBox.delete(1.0, END)
+            text = file.read()
+            self.textBox.insert(END, text)
+            file.close()
 
     # returns the color value in hex with the # included
     def getColor(self):
@@ -175,7 +201,7 @@ class newTextEditor():
         self.leaf = Toplevel(self.root)
         self.leaf.title('About')
         self.leaf.geometry('285x95')
-        self.leaf.iconbitmap(resource_path('icon.ico'))
+        self.leaf.iconbitmap('icon.ico')
         self.a = Label(self.leaf, text='Created by Hannan Khan (2020)')
         self.githublink = tkinter.Label(self.leaf, text='https://github.com/hannankhan888', foreground='blue', cursor='hand2')
         self.githublink.bind('<Button-1>', lambda e: webbrowser.open_new('https://github.com/hannankhan888'))
@@ -191,8 +217,8 @@ class newTextEditor():
     def licenseBox(self):
         self.leaflet = Toplevel(self.leaf)
         self.leaflet.title('License')
-        self.leaflet.geometry('400x500')
-        self.leaflet.iconbitmap(resource_path('icon.ico'))
+        self.leaflet.geometry('500x510')
+        self.leaflet.iconbitmap('icon.ico')
         self.licenseText = Text(self.leaflet, bg='lightgray')
         self.licenseText.insert(END,'MIT License\n\nCopyright (c) 2020 Hannan Khan\n\nPermission is hereby granted, '
                                     'free of charge, to any person obtaining a copy of this software and associated '
