@@ -16,11 +16,12 @@ import webbrowser
 from tkinter import *
 from tkinter.ttk import *
 from tkinter.filedialog import asksaveasfilename, askopenfilename
+from tkinter.messagebox import askyesnocancel
 import tkinter.colorchooser
 from tkfontchooser import askfont
 
 
-#function needed to use pyinstaller properly:
+# function needed to use pyinstaller properly:
 def resource_path(relative_path):
     """ Get absolute path to resource, works for dev and for PyInstaller """
     try:
@@ -46,6 +47,8 @@ class newTextEditor():
         self.wordVal.set(0)
         self.charVal = IntVar()
         self.charVal.set(1)
+        self.signature = StringVar()
+        self.endSignature = StringVar()
 
         # add the text editor to a frame with scrollbars
         self.textFrame = tkinter.Frame(self.root)
@@ -77,8 +80,10 @@ class newTextEditor():
 
         # creates the viewmenu, and adds cascade of change view
         self.viewMenu = Menu(self.topMenuBar, tearoff=0)
-        self.viewMenu.add_checkbutton(label="Word Wrap", onvalue=1, offvalue=0, variable=self.wordVal, command=self.wordWrap)
-        self.viewMenu.add_checkbutton(label='Character Wrap', onvalue=1, offvalue=0, variable=self.charVal, command=self.charWrap)
+        self.viewMenu.add_checkbutton(label="Word Wrap", onvalue=1, offvalue=0, variable=self.wordVal,
+                                      command=self.wordWrap)
+        self.viewMenu.add_checkbutton(label='Character Wrap', onvalue=1, offvalue=0, variable=self.charVal,
+                                      command=self.charWrap)
 
         # add a changefont option to the viewmenu
         self.viewMenu.add_command(label="Change Font", command=self.setFont)
@@ -97,15 +102,14 @@ class newTextEditor():
         self.helpMenu.add_command(label="About", command=self.about)
         self.topMenuBar.add_cascade(label="Help", menu=self.helpMenu)
 
-
-        #if argument exists, open the specified file (takes care of spaces in path)
+        # if argument exists, open the specified file (also takes care of spaces in path)
         if (len(sys.argv) > 1):
             self.fullpath = r""""""
             for i, word in enumerate(sys.argv):
                 if (i == 1):
                     self.fullpath = self.fullpath + word
                 elif (i > 1):
-                    self.fullpath =self.fullpath + ' ' + word
+                    self.fullpath = self.fullpath + ' ' + word
             self.fullpath.strip()
             self.filename = os.path.basename(self.fullpath)
             file = open(self.fullpath, "r")
@@ -115,10 +119,12 @@ class newTextEditor():
             self.textBox.insert(END, text)
             file.close()
 
+        self.signature.set(self.textBox.get(1.0, END))
+        self.root.protocol("WM_DELETE_WINDOW", self.saveAndExit)
         self.root.mainloop()
 
     def exitRootWindow(self):
-        self.root.quit()
+        self.root.destroy()
 
     def saveAs(self):
         self.filename = asksaveasfilename(title="Select File",
@@ -140,6 +146,21 @@ class newTextEditor():
             file.close()
         else:
             self.saveAs()
+
+    def saveAndExit(self):
+        self.endSignature.set(self.textBox.get(1.0, END))
+        if self.signature.get() == self.endSignature.get():
+            self.exitRootWindow()
+        elif self.signature.get() != self.endSignature.get():
+            result = askyesnocancel("Exit", "Save changes before exiting?")
+            if result == NO:
+                self.exitRootWindow()
+            elif result == YES:
+                self.save()
+                self.exitRootWindow()
+            elif result is NONE:
+                pass
+
 
     def openFile(self):
         self.filename = askopenfilename(title="Select file", filetypes=(("text files", "*.txt"), ("all files", "*.*")))
@@ -203,10 +224,13 @@ class newTextEditor():
         self.leaf.geometry('285x95')
         self.leaf.iconbitmap('icon.ico')
         self.a = Label(self.leaf, text='Created by Hannan Khan (2020)')
-        self.githublink = tkinter.Label(self.leaf, text='https://github.com/hannankhan888', foreground='blue', cursor='hand2')
+        self.githublink = tkinter.Label(self.leaf, text='https://github.com/hannankhan888', foreground='blue',
+                                        cursor='hand2')
         self.githublink.bind('<Button-1>', lambda e: webbrowser.open_new('https://github.com/hannankhan888'))
-        self.linkedinlink = tkinter.Label(self.leaf, text='https://www.linkedin.com/in/hannankhan888/', fg='blue', cursor='hand2')
-        self.linkedinlink.bind("<Button-1>", lambda e: webbrowser.open_new('https://www.linkedin.com/in/hannankhan888/'))
+        self.linkedinlink = tkinter.Label(self.leaf, text='https://www.linkedin.com/in/hannankhan888/', fg='blue',
+                                          cursor='hand2')
+        self.linkedinlink.bind("<Button-1>",
+                               lambda e: webbrowser.open_new('https://www.linkedin.com/in/hannankhan888/'))
         self.licenseLink = tkinter.Label(self.leaf, text='License', fg='blue', cursor='hand2')
         self.licenseLink.bind('<Button-1>', lambda e: self.licenseBox())
         self.a.pack()
@@ -220,21 +244,21 @@ class newTextEditor():
         self.leaflet.geometry('500x510')
         self.leaflet.iconbitmap('icon.ico')
         self.licenseText = Text(self.leaflet, bg='lightgray')
-        self.licenseText.insert(END,'MIT License\n\nCopyright (c) 2020 Hannan Khan\n\nPermission is hereby granted, '
-                                    'free of charge, to any person obtaining a copy of this software and associated '
-                                    'documentation files (the \"Software\"), to deal in the Software without '
-                                    'restriction, including without limitation the rights to use, copy, modify, '
-                                    'merge, publish, distribute, sublicense, and/or sell copies of the Software, '
-                                    'and to permit persons to whom the Software is furnished to do so, subject to the '
-                                    'following conditions:\nThe above copyright notice and this permission notice '
-                                    'shall be included in all copies or substantial portions of the Software.\n\nTHE '
-                                    'SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR '
-                                    'IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, '
-                                    'FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE '
-                                    'AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER '
-                                    'LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, '
-                                    'OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE '
-                                    'SOFTWARE.')
+        self.licenseText.insert(END, 'MIT License\n\nCopyright (c) 2020 Hannan Khan\n\nPermission is hereby granted, '
+                                     'free of charge, to any person obtaining a copy of this software and associated '
+                                     'documentation files (the \"Software\"), to deal in the Software without '
+                                     'restriction, including without limitation the rights to use, copy, modify, '
+                                     'merge, publish, distribute, sublicense, and/or sell copies of the Software, '
+                                     'and to permit persons to whom the Software is furnished to do so, subject to the '
+                                     'following conditions:\nThe above copyright notice and this permission notice '
+                                     'shall be included in all copies or substantial portions of the Software.\n\nTHE '
+                                     'SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR '
+                                     'IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, '
+                                     'FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE '
+                                     'AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER '
+                                     'LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, '
+                                     'OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE '
+                                     'SOFTWARE.')
         self.licenseText.configure(state=DISABLED, wrap=WORD)
         self.licenseText.pack(fill=BOTH, expand=1)
 
@@ -244,3 +268,4 @@ def main():
 
 
 if __name__ == '__main__': main()
+
