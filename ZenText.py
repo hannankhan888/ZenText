@@ -222,7 +222,7 @@ class newTextEditor():
         self.leaf = Toplevel(self.root)
         self.leaf.title('About')
         self.leaf.geometry('285x95')
-        self.leaf.iconbitmap('icon.ico')
+        self.leaf.iconbitmap(resource_path('icon.ico'))
         self.a = Label(self.leaf, text='Created by Hannan Khan (2020)')
         self.githublink = tkinter.Label(self.leaf, text='https://github.com/hannankhan888', foreground='blue',
                                         cursor='hand2')
@@ -242,7 +242,7 @@ class newTextEditor():
         self.leaflet = Toplevel(self.leaf)
         self.leaflet.title('License')
         self.leaflet.geometry('500x510')
-        self.leaflet.iconbitmap('icon.ico')
+        self.leaflet.iconbitmap(resource_path('icon.ico'))
         self.licenseText = Text(self.leaflet, bg='lightgray')
         self.licenseText.insert(END, 'MIT License\n\nCopyright (c) 2020 Hannan Khan\n\nPermission is hereby granted, '
                                      'free of charge, to any person obtaining a copy of this software and associated '
