@@ -70,7 +70,7 @@ class newTextEditor():
         self.textCanvas = tkinter.Canvas(self.root)
         self.textCanvas.grid(row=0, column=0, sticky=N + S + E + W)
         self.textBox = Text(self.root, undo=True, bg="white")
-        self.textBox.config(font=("Yu Gothic UI Semilight", "12"))
+        self.textBox.config(font=("Consolas", "12"))
         self.root.wm_attributes("-alpha", self.alpha.get())
 
         #adds auto scroll bars to the grid configuration.
